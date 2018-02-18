@@ -102,7 +102,7 @@ $(function() {
             .range([0, w]);
 
     var y = d3.scaleLinear()
-            .domain([0, 1000])
+            .domain([0, 5.5])
             .range([h, 0]);
 
     var xAxis = d3.axisBottom()
