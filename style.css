@@ -1,6 +1,3 @@
-div {
-    border: 1px solid black;
-}
 
 #layout {
     width: 1080px;
@@ -15,30 +12,30 @@ div {
 #title {
     text-align: center;
     height: 50px;
-border: none;
-font-size: 20px;
+    border: none;
+    font-size: 20px;
 }
 
 #visualization {
-    width: 800px;
+    width: 1000;
     height:450px;
     float: left;
     border-top: 0;
     text-align: center;
-border-right: 0px;
+    border-right: 0px;
 }
 
 #controls {
     width: 276px;
-    height:600px;
-    float: right;
+    border: none;
+    /* height:600px; */
+    /* float: right; */
 }
 
 body {
     font: 11px sans-serif;
 }
-.axis line,
-.axis text {
+.axis line, .axis text {
     font: 11px sans-serif;
 }
 .axis path {
@@ -46,3 +43,4 @@ body {
     stroke: #000;
     shape-rendering: crispEdges;
 }
+

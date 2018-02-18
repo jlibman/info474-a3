@@ -35,7 +35,7 @@ $(function() {
         });      
     }
 
-    var width = 1000;
+    var width = 750;
     var height = 450;
     var margin = {top: 20, right: 15, bottom: 30, left: 40};
     var w = width - margin.left - margin.right;
@@ -145,11 +145,11 @@ $(function() {
         circle.enter().append("circle")
             .attr("cx", function(d) { return x(d.year);  })
             .attr("cy", function(d) { return y(d.prec);  })
-            .attr("r", 1)
+            .attr("r", 4)
             .style("stroke", "black")
         //.style("fill", function(d) { return colLightness(d.vol); })
-            // .style("fill", function(d) { return col(d.type); })
-            // .style("opacity", 0.5);
+            .style("fill", function(d) { return col(d.type); })
+            .style("opacity", 0.5);
     }
 
     function filterType(mtype) {x
