@@ -53,6 +53,7 @@ $(function() {
             d.yr = +d.year;
             d.month = +d.month;
             d.day = +d.day;
+            d.postionX = d.yr + d.month/12 + d.day/365;
         });
         //dataset is the full dataset -- maintain a copy of this at all times
         dataset = ks;
@@ -137,13 +138,13 @@ $(function() {
         .data(dataset);
 
         circle
-            .attr("cx", function(d) { return x(d.year);  })
+            .attr("cx", function(d) { return x(d.postionX);  })
             .attr("cy", function(d) { return y(d.prec);  });
             // .style("fill", function(d) { return col(d.type); });
         circle.exit().remove();
 
         circle.enter().append("circle")
-            .attr("cx", function(d) { return x(d.year);  })
+            .attr("cx", function(d) { return x(d.postionX);  })
             .attr("cy", function(d) { return y(d.prec);  })
             .attr("r", 1)
             .style("stroke", "black")
@@ -152,14 +153,27 @@ $(function() {
             // .style("opacity", 0.5);
     }
 
-    function filterType(mtype) {x
+    function filterTypeYear(mtype) {
         //add code to filter to mytype and rerender vis here
         var res = patt.test(mtype);
         if(res){
             drawVis(dataset);
         }else{
             var ndata = dataset.filter(function(d) {
-                return d["type"] == mtype;
+                return ((d.year >= mtype[0]) && (d.year <= mtype[1]));
+            });
+            drawVis(ndata);
+        }
+    }
+
+    function filterTypeMonth(mtype) {
+        //add code to filter to mytype and rerender vis here
+        var res = patt.test(mtype);
+        if(res){
+            drawVis(dataset);
+        }else{
+            var ndata = dataset.filter(function(d) {
+                return d.month == mtype;
             });
             drawVis(ndata);
         }
@@ -172,14 +186,15 @@ $(function() {
     //     drawVis(ndata);
     // }
     
-    // $( "#volume" ).slider({
-    //     range: true,
-    //     min: 0,
-    //     max: 1200,
-    //     values: [ 0, 1200 ],
-    //     slide: function( event, ui ) {
-    //         $( "#volumeamount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-    //         filterVolume(ui.values); } 
-    //     });
-    //     $( "#volumeamount" ).val( $( "#volume" ).slider( "values", 0 ) + " - " + $( "#volume" ).slider( "values", 1 ) ); 
+    $( "#yearSlider" ).slider({
+        range: true,
+        min: 1948,
+        max: 2018,
+        values: [ 1948, 2018 ],
+        slide: function( event, ui ) {
+            console.log(ui.values)
+            $( "#yearInput" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+            filterTypeYear(ui.values); } 
+        });
+        $( "#yearInput" ).val( $( "#yearSlider" ).slider( "values", 0 ) + " - " + $( "#yearSlider" ).slider( "values", 1 ) ); 
 });
