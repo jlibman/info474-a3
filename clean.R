@@ -7,5 +7,8 @@ data$year <- substr(data$DATE, 1,4)
 data$month <- substr(data$DATE, 6,7)
 data$day <- substr(data$DATE, 9,10)
 
+# Remove NA values
+omitted.na.data <- na.omit(data) 
+
 # Export dataset as csv
-write.csv(data, file = "data.csv")
+write.csv(omitted.na.data, file = "data.csv")
