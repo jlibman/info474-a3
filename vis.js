@@ -11,10 +11,7 @@ $(function() {
             function(){
                 filterTypeMonth(this.value);
             }
-        // initialVis();
     };
-
-    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     function populateDropdowns() {
         var yearDropdown = document.getElementById('selectYear');
@@ -27,7 +24,6 @@ $(function() {
             yearDropdown.appendChild(yearOption);
         }
 
-        //TODO: make global to reference position in array to match dataset?
         months.forEach(function(m) {
             var monthOption = document.createElement('option');
             monthOption.value = m;
@@ -43,7 +39,8 @@ $(function() {
     var h = height - margin.top - margin.bottom;
 
     var patt = new RegExp("all");
-    var dataset; //the full dataset
+    var dataset, CURRENT, FINAL_NO_MOD;; //the full dataset
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     //read in the data
     d3.csv("data.csv", function(error, ks) {
@@ -58,6 +55,8 @@ $(function() {
         });
         //dataset is the full dataset -- maintain a copy of this at all times
         dataset = ks;
+        CURRENT = ks;
+        FINAL_NO_MOD = ks;
 
         //all the data is now loaded, so draw the initial vis
         drawVis(dataset);
@@ -134,10 +133,10 @@ $(function() {
         .style("text-anchor", "end")
         .text("Precipitation");
 
-    function drawVis(dataset) { //draw the circles initially and on each interaction with a control
+    function drawVis(mdataset) { //draw the circles initially and on each interaction with a control
         var circle = chart.selectAll("circle")
-        .data(dataset);
-
+        .data(mdataset);
+        console.log(mdataset.length)
         circle
             .attr("cx", function(d) { return x(d.postionX);  })
             .attr("cy", function(d) { return y(d.prec);  });
@@ -154,44 +153,68 @@ $(function() {
             // .style("opacity", 0.5);
     }
 
-    function filterTypeYear(mtype) {
-        // var res = patt.test(mtype);
-        // if(res){
-        //     drawVis(dataset);
-        // }
-        if(Array.isArray(mtype)) {
-            var ndata = dataset.filter(function(d) {
-                return ((d.year >= mtype[0]) && (d.year <= mtype[1]));
-            });
-            drawVis(ndata);
-            
-        } else {
-            var ndata = dataset.filter(function(d) {
-                return d.year == mtype;
-            });
-            drawVis(ndata);
-        }
+    function colorMonths(mdataset) { //draw the circles initially and on each interaction with a control
+        var circle = chart.selectAll("circle")
+        .data(mdataset);
+
+        circle
+            .attr("cx", function(d) { return x(d.postionX);  })
+            .attr("cy", function(d) { return y(d.prec);  });
+            // .style("fill", 'red' );
+        // circle.exit().remove();
+
+        circle.enter().append("circle")
+            .attr("cx", function(d) { return x(d.postionX);  })
+            .attr("cy", function(d) { return y(d.prec);  })
+            .attr("r", 1)
+            .style("stroke", "black")
+        //.style("fill", function(d) { return colLightness(d.vol); })
+            // .style("fill", function(d) { return col(d.type); })
+            // .style("opacity", 0.5);
     }
 
-    function filterTypeMonth(mtype) {
-        //add code to filter to mytype and rerender vis here
-        var res = patt.test(mtype);
-        if(res){
-            drawVis(dataset);
-        }else{
-            var ndata = dataset.filter(function(d) {
-                return d.month == mtype;
+    function filterTypeYear(myear) {
+        var reset = patt.test(myear);
+        if(reset){
+            drawVis(FINAL_NO_MOD);
+            CURRENT = FINAL_NO_MOD;
+        }else {
+        //range slider
+        if(Array.isArray(myear)) {
+            var ndata = FINAL_NO_MOD.filter(function(d) {
+                return ((d.year >= myear[0]) && (d.year <= myear[1]));
             });
+            CURRENT = ndata;
             drawVis(ndata);
-        }
+        } else {//dropdown selection
+            var ndata = FINAL_NO_MOD.filter(function(d) {
+                return d.year == myear;
+            });
+            CURRENT = ndata;
+            drawVis(ndata);
+        }}
     }
 
-    // function filterVolume(values){
-    //     var ndata = dataset.filter(function(d) {
-    //         return d["volume"] >= values[0] && d["volume"] < values[1];
-    //     });
-    //     drawVis(ndata);
-    // }
+    // TODO only years 1948-1953 are filtered
+    function filterTypeMonth(mmonth) {
+        var reset = patt.test(mmonth);
+        if(reset){
+            drawVis(FINAL_NO_MOD);
+            CURRENT = FINAL_NO_MOD;
+        }else {
+        //handle 0 based indexing of month array
+        var monthPos = 1;
+        for(var i = 0; i < months.length; i++) {
+            if (months[i]==mmonth){
+                monthPos += i;
+            }
+        }
+        var ndata = CURRENT.filter(function(d) {
+            return d.month == monthPos;
+        });
+        CURRENT = ndata;
+        colorMonths(ndata);
+    }}
     
     $( "#yearSlider" ).slider({
         range: true,
