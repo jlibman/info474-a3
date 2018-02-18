@@ -14,6 +14,8 @@ $(function() {
         // initialVis();
     };
 
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
     function populateDropdowns() {
         var yearDropdown = document.getElementById('selectYear');
         var monthDropdown = document.getElementById('selectMonth');
@@ -26,7 +28,6 @@ $(function() {
         }
 
         //TODO: make global to reference position in array to match dataset?
-        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         months.forEach(function(m) {
             var monthOption = document.createElement('option');
             monthOption.value = m;
@@ -154,13 +155,19 @@ $(function() {
     }
 
     function filterTypeYear(mtype) {
-        //add code to filter to mytype and rerender vis here
-        var res = patt.test(mtype);
-        if(res){
-            drawVis(dataset);
-        }else{
+        // var res = patt.test(mtype);
+        // if(res){
+        //     drawVis(dataset);
+        // }
+        if(Array.isArray(mtype)) {
             var ndata = dataset.filter(function(d) {
                 return ((d.year >= mtype[0]) && (d.year <= mtype[1]));
+            });
+            drawVis(ndata);
+            
+        } else {
+            var ndata = dataset.filter(function(d) {
+                return d.year == mtype;
             });
             drawVis(ndata);
         }
@@ -192,7 +199,6 @@ $(function() {
         max: 2018,
         values: [ 1948, 2018 ],
         slide: function( event, ui ) {
-            console.log(ui.values)
             $( "#yearInput" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
             filterTypeYear(ui.values); } 
         });
