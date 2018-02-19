@@ -107,8 +107,11 @@ $(function() {
             .range([h, 0]);
 
     var xAxis = d3.axisBottom()
-        .ticks(20)
+        // .ticks(20)
         .scale(x);
+
+    var yAxis = d3.axisLeft()
+        .scale(y);
 
     chart.append("g")
         .attr("class", "axis")
@@ -119,10 +122,7 @@ $(function() {
         .attr("y", -6)
         .style("text-anchor", "end")
         .text("Date");
-
-    var yAxis = d3.axisLeft()
-        .scale(y);
-
+   
     chart.append("g")
         .attr("class", "axis")
         .call(yAxis)
@@ -136,7 +136,6 @@ $(function() {
     function drawVis(mdataset) { //draw the circles initially and on each interaction with a control
         var circle = chart.selectAll("circle")
         .data(mdataset);
-        console.log(mdataset.length)
         circle
             .attr("cx", function(d) { return x(d.postionX);  })
             .attr("cy", function(d) { return y(d.prec);  });
@@ -161,7 +160,7 @@ $(function() {
             .attr("cx", function(d) { return x(d.postionX);  })
             .attr("cy", function(d) { return y(d.prec);  });
             // .style("fill", 'red' );
-        // circle.exit().remove();
+        circle.exit().remove();
 
         circle.enter().append("circle")
             .attr("cx", function(d) { return x(d.postionX);  })
@@ -179,43 +178,46 @@ $(function() {
             drawVis(FINAL_NO_MOD);
             CURRENT = FINAL_NO_MOD;
         }else {
-        //range slider
-        if(Array.isArray(myear)) {
-            var ndata = FINAL_NO_MOD.filter(function(d) {
-                return ((d.year >= myear[0]) && (d.year <= myear[1]));
-            });
-            CURRENT = ndata;
-            drawVis(ndata);
-        } else {//dropdown selection
-            var ndata = FINAL_NO_MOD.filter(function(d) {
-                return d.year == myear;
-            });
-            CURRENT = ndata;
-            drawVis(ndata);
-        }}
+            if(Array.isArray(myear)) {//range slider
+                var ndata = FINAL_NO_MOD.filter(function(d) {
+                    return ((d.year >= myear[0]) && (d.year <= myear[1]));
+                });
+                CURRENT = ndata;
+                drawVis(ndata);
+                x.domain([myear[0],myear[1]])  
+                chart.select(".axis")
+                        .transition() //.duration(1500).ease("sin-in-out")  // https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_ease
+                        .call(xAxis); 
+            } else {//dropdown selection
+                var ndata = FINAL_NO_MOD.filter(function(d) {
+                    return d.year == myear;
+                });
+                CURRENT = ndata;
+                drawVis(ndata);
+            }
+        }
     }
 
-    // TODO only years 1948-1953 are filtered
     function filterTypeMonth(mmonth) {
         var reset = patt.test(mmonth);
         if(reset){
             drawVis(FINAL_NO_MOD);
             CURRENT = FINAL_NO_MOD;
         }else {
-        //handle 0 based indexing of month array
-        var monthPos = 1;
-        for(var i = 0; i < months.length; i++) {
-            if (months[i]==mmonth){
-                monthPos += i;
+            //handle 0 based indexing of month array
+            var monthPos = 1;
+            for(var i = 0; i < months.length; i++) {
+                if (months[i]==mmonth){
+                    monthPos += i;
+                }
             }
+            var ndata = CURRENT.filter(function(d) {
+                return d.month == monthPos;
+            });
+            colorMonths(ndata);
         }
-        var ndata = CURRENT.filter(function(d) {
-            return d.month == monthPos;
-        });
-        CURRENT = ndata;
-        colorMonths(ndata);
-    }}
-    
+    }
+        
     $( "#yearSlider" ).slider({
         range: true,
         min: 1948,
@@ -227,3 +229,9 @@ $(function() {
         });
         $( "#yearInput" ).val( $( "#yearSlider" ).slider( "values", 0 ) + " - " + $( "#yearSlider" ).slider( "values", 1 ) ); 
 });
+
+
+// TODO adjust axis for year selecor
+// TODO months over whole range
+// TODO select months after year -->if current !=dataset it means there is a range of years
+// TODO change xaxis labels to months when small enough
