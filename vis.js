@@ -120,20 +120,20 @@ $(function() {
         .attr("transform", "translate(0," + h + ")")
         .call(xAxis)
         .append("text")
-        .attr("x", w)
-        .attr("y", -6)
-        .style("text-anchor", "end")
-        .text("Date");
+            .attr("x", w)
+            .attr("y", -6)
+            .style("text-anchor", "middle")
+            .text("Date");
    
     chart.append("g")
         .attr("class", "axis")
         .call(yAxis)
         .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("Precipitation");
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "middle")
+            .text("Precipitation");
 
     function drawVis(mdataset) { //draw the circles initially and on each interaction with a control
         var circle = chart.selectAll("circle")
@@ -265,7 +265,6 @@ $(function() {
 // TODO months over whole range
 // TODO select months after year -->if current !=dataset it means there is a range of years
 // TODO change xaxis labels to months when small enough
-// TODO dynamic title (february from 2000-2008)
 // TODO Single year axis transition
 // TODO x and  y axis labels 
 // TODO tooltips

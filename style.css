@@ -26,7 +26,7 @@
 }
 
 #controls {
-    width: 276px;
+    width: 400px;
     border: none;
     margin: 20px;
     /* height:600px; */
@@ -55,3 +55,8 @@ body {
 #layout > div.titleDiv > label {
     font-size: 20px;
 }
+ 
+#sliderid {
+    float: right;
+    width: 45%;
+}  
