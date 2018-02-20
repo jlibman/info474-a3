@@ -240,6 +240,8 @@ $(function() {
             var ndata = CURRENT.filter(function(d) {
                 return d.month == monthPos;
             });
+            $( "#title" ).val($( "#yearSlider" ).slider( "values", 0 ) + " - " + $( "#yearSlider" ).slider( "values", 1 ) + ", " + mmonth);
+
             colorMonths(ndata);
         }
     }
@@ -251,9 +253,12 @@ $(function() {
         values: [ 1948, 2018 ],
         slide: function( event, ui ) {
             $( "#yearInput" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+            $( "#title" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );            
             filterTypeYear(ui.values); } 
         });
-        $( "#yearInput" ).val( $( "#yearSlider" ).slider( "values", 0 ) + " - " + $( "#yearSlider" ).slider( "values", 1 ) ); 
+
+        $( "#yearInput" ).val( $( "#yearSlider" ).slider( "values", 0 ) + " - " + $( "#yearSlider" ).slider( "values", 1 ) );
+        $( "#title" ).val($( "#yearSlider" ).slider( "values", 0 ) + " - " + $( "#yearSlider" ).slider( "values", 1 ));
 });
 
 
