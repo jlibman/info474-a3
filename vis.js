@@ -41,6 +41,7 @@ $(function() {
     var patt = new RegExp("all");
     var dataset, CURRENT, FINAL_NO_MOD;; //the full dataset
     var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var monthSelected = false;
 
     //read in the data
     d3.csv("data.csv", function(error, ks) {
@@ -108,7 +109,8 @@ $(function() {
 
     var xAxis = d3.axisBottom()
         // .ticks(20)
-        .scale(x);
+        .scale(x)
+        .tickFormat(d3.format("d"));
 
     var yAxis = d3.axisLeft()
         .scale(y);
@@ -155,7 +157,6 @@ $(function() {
     function colorMonths(mdataset) { //draw the circles initially and on each interaction with a control
         var circle = chart.selectAll("circle")
         .data(mdataset);
-
         circle
             .attr("cx", function(d) { return x(d.postionX);  })
             .attr("cy", function(d) { return y(d.prec);  });
@@ -175,18 +176,36 @@ $(function() {
     function filterTypeYear(myear) {
         var reset = patt.test(myear);
         if(reset){
-            drawVis(FINAL_NO_MOD);
-            CURRENT = FINAL_NO_MOD;
+            // All years, but only showing selected month
+            // if(monthSelected) {
+            //     var monthPos = 1;
+            //     for(var i = 0; i < months.length; i++) {
+            //         if (months[i]==mmonth){
+            //             monthPos += i;
+            //         }
+            //     }
+            //     var ndata = FINAL_NO_MOD.filter(function(d) {
+            //         return d.month == monthPos;
+            //     });
+            //     drawVis(ndata)
+            //     CURRENT = ndata;
+            // } else { // All years, all months
+                drawVis(FINAL_NO_MOD);
+                CURRENT = FINAL_NO_MOD;
+            // }
         }else {
             if(Array.isArray(myear)) {//range slider
-                var ndata = FINAL_NO_MOD.filter(function(d) {
+                // if(monthSelected) {
+                    
+                // }
+                var ndata = CURRENT.filter(function(d) {
                     return ((d.year >= myear[0]) && (d.year <= myear[1]));
                 });
                 CURRENT = ndata;
                 drawVis(ndata);
                 x.domain([myear[0],myear[1]])  
                 chart.select(".axis")
-                        .transition() //.duration(1500).ease("sin-in-out")  // https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_ease
+                        .transition() 
                         .call(xAxis); 
             } else {//dropdown selection
                 var ndata = FINAL_NO_MOD.filter(function(d) {
@@ -194,6 +213,11 @@ $(function() {
                 });
                 CURRENT = ndata;
                 drawVis(ndata);
+                // console.log(myear + " "+ (parseInt(myear)+1).toString())
+                x.domain([myear, (parseInt(myear)+1).toString()])  
+                chart.select(".axis")
+                        .transition() 
+                        .call(xAxis);
             }
         }
     }
@@ -203,7 +227,9 @@ $(function() {
         if(reset){
             drawVis(FINAL_NO_MOD);
             CURRENT = FINAL_NO_MOD;
+            monthSelected = false;
         }else {
+            monthSelected = true;
             //handle 0 based indexing of month array
             var monthPos = 1;
             for(var i = 0; i < months.length; i++) {
@@ -231,7 +257,10 @@ $(function() {
 });
 
 
-// TODO adjust axis for year selecor
 // TODO months over whole range
 // TODO select months after year -->if current !=dataset it means there is a range of years
 // TODO change xaxis labels to months when small enough
+// TODO dynamic title (february from 2000-2008)
+// TODO Single year axis transition
+// TODO x and  y axis labels 
+// TODO tooltips
